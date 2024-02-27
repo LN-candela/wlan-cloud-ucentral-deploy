@@ -2,29 +2,81 @@ version: '3'
 
 volumes:
   owgw_data:
-    driver: local
+    driver_opts:
+      type: "none"
+      o: "bind"
+      device: "/mnt/efs/owgw_data"
+    external: true
   owsec_data:
-    driver: local
+    driver_opts:
+      type: "none"
+      o: "bind"
+      device: "/mnt/efs/owsec_data"
+    external: true
   owfms_data:
-    driver: local
+    driver_opts:
+      type: "none"
+      o: "bind"
+      device: "/mnt/efs/owfms_data"
+    external: true
+  
+    
   owprov_data:
-    driver: local
+    driver_opts:
+      type: "none"
+      o: "bind"
+      device: "/mnt/efs/owprov_data"
+    external: true
+
+    
   owanalytics_data:
-    driver: local
+    driver_opts:
+      type: "none"
+      o: "bind"
+      device: "/mnt/efs/owanalytics_data"
+    external: true
+    
   owsub_data:
-    driver: local
+    driver_opts:
+      type: "none"
+      o: "bind"
+      device: "/mnt/efs/owsub_data"
+    external: true
+
   owrrm_data:
-    driver: local
+    driver_opts:
+      type: "none"
+      o: "bind"
+      device: "/mnt/efs/owrrm_data"
+    external: true
+    
   zookeeper_data:
-    driver: local
+    driver_opts:
+      type: "none"
+      o: "bind"
+      device: "/mnt/efs/zookeeper_data"
+    external: true
+    
   zookeeper_datalog:
-    driver: local
+    driver_opts:
+      type: "none"
+      o: "bind"
+      device: "/mnt/efs/zookeeper_datalog"
+    external: true
+    
   kafka_data:
-    driver: local
+    driver_opts:
+      type: "none"
+      o: "bind"
+      device: "/mnt/efs/kafka_data"
+    external: true
+    
   mysql_data:
-    driver: local
-  letsencrypt_certs:
-    driver: local
+    driver_opts:
+      type: "none"
+      o: "bind"
+      device: "/mnt/efs/mysql_data"
+    external: true
 
 networks:
   openwifi:
