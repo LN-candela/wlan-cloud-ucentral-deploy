@@ -1,0 +1,3 @@
+_values.custom-*.yaml
+certs/
+env_*

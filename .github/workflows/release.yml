@@ -11,13 +11,13 @@ defaults:
 
 jobs:
   helm-package:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     env:
       HELM_REPO_URL: https://tip.jfrog.io/artifactory/tip-wlan-cloud-ucentral-helm/
       HELM_REPO_USERNAME: ucentral
     steps:
       - name: Checkout uCentral assembly chart repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: wlan-cloud-ucentral-deploy
           repository: Telecominfraproject/wlan-cloud-ucentral-deploy
@@ -42,9 +42,7 @@ jobs:
       - name: Build package
         working-directory: wlan-cloud-ucentral-deploy/chart
         run: |
-          helm plugin install https://github.com/aslafy-z/helm-git --version 0.10.0
-          helm repo add bitnami https://charts.bitnami.com/bitnami
-          helm repo update
+          helm plugin install https://github.com/aslafy-z/helm-git --version 0.16.0
           helm dependency update
           mkdir dist
           helm package . -d dist
@@ -70,7 +68,7 @@ jobs:
           cat Chart.yaml | yq -r '.dependencies[] | "\(.name) - \(.repository) v\(.version)"' >> release.txt
 
       - name: Create GitHub release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           body_path: wlan-cloud-ucentral-deploy/chart/release.txt
           files: wlan-cloud-ucentral-deploy/chart/dist/*
@@ -80,7 +78,7 @@ jobs:
     needs: helm-package
     steps:
     - name: Trigger testing of release
-      uses: peter-evans/repository-dispatch@v1
+      uses: peter-evans/repository-dispatch@v3
       with:
         token: ${{ secrets.WLAN_TESTING_PAT }}
         repository: Telecominfraproject/wlan-testing

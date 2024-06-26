@@ -108,7 +108,7 @@ export OWRRM_VERSION_TAG=$(echo ${OWRRM_VERSION} | tr '/' '-')
 # Check deployment method that's required for this environment
 helm plugin install https://github.com/databus23/helm-diff || true
 if [[ "$DEPLOY_METHOD" == "git" ]] ; then
-    helm plugin install https://github.com/aslafy-z/helm-git --version 0.10.0 || true
+    helm plugin list | grep "^helm-git" || helm plugin install https://github.com/aslafy-z/helm-git || true
     rm -rf wlan-cloud-ucentral-deploy || true
     git clone https://github.com/Telecominfraproject/wlan-cloud-ucentral-deploy.git
     cd wlan-cloud-ucentral-deploy
@@ -125,8 +125,7 @@ if [[ "$DEPLOY_METHOD" == "git" ]] ; then
         sed -i '/wlan-cloud-userportal@/s/ref=.*/ref='${OWSUB_VERSION}'\"/g' Chart.yaml
         sed -i '/wlan-cloud-rrm@/s/ref=.*/ref='${OWRRM_VERSION}'\"/g' Chart.yaml
     fi
-    helm repo add bitnami https://charts.bitnami.com/bitnami
-    helm repo update
+    #helm repo add bitnami https://charts.bitnami.com/bitnami && helm repo update
     [ -z "$SKIP_DEPS" ] && helm dependency update
     cd ../..
     export DEPLOY_SOURCE="wlan-cloud-ucentral-deploy/chart"
@@ -162,14 +161,13 @@ else
   export OWGW_SERVICE_DNS_RECORDS=""
 fi
 
-envsubst < values.custom.tpl.yaml > values.custom-${NAMESPACE}.yaml
+envsubst < values.custom.tpl.yaml > _values.custom-${NAMESPACE}.yaml
 
-set -x
 helm upgrade --install --create-namespace --wait --timeout 60m \
   --namespace openwifi-${NAMESPACE} \
   ${VALUES_FILES_FLAGS[*]} \
   ${EXTRA_VALUES_FLAGS[*]} \
-  -f values.custom-${NAMESPACE}.yaml \
+  -f _values.custom-${NAMESPACE}.yaml \
   --set-file owgw.certs."restapi-cert\.pem"=$CERT_LOCATION \
   --set-file owgw.certs."restapi-key\.pem"=$KEY_LOCATION \
   --set-file owgw.certs."websocket-cert\.pem"=$CERT_LOCATION \
